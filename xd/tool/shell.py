@@ -27,6 +27,21 @@ def chdir(path, quiet=False):
     return
 
 
+dirstack = []
+
+def pushd(path, quiet=False):
+    """Save current working directory and change it to the specified path.
+
+    Use popd() function to restore the current working directory again.
+    """
+    dirstack.append(os.getcwd())
+    return chdir(path, quiet)
+
+def popd(quiet=False):
+    """Restore the current working directory."""
+    return chdir(dirstack.pop())
+
+
 def call(cmd, path=None, quiet=False, success_returncode=0):
     """Run shell command.
 
