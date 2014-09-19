@@ -4,7 +4,6 @@ python:
 before_install:
   - "sudo apt-get update"
   - "sudo apt-get install realpath"
-  - "pip install coverage"
 install:
   - "echo nothing to do"
 script: "./test.sh"
