@@ -12,7 +12,7 @@ additional commands by the manifest layers.
 - Continous Integration is provided by [Travis CI](https://travis-ci.org)
   [![Travis CI Status](https://travis-ci.org/XD-embedded/xd-tool.svg?branch=master)](https://travis-ci.org/XD-embedded/xd-tool)
 - Code coverage analysis is provided by [Coveralls](https://coveralls.io)
-  [![Coverage Status](https://coveralls.io/repos/XD-embedded/xd-tool/badge.png)](https://coveralls.io/r/XD-embedded/xd-tool)
+  [![Coverage Status](https://coveralls.io/repos/XD-embedded/xd-tool/badge.png?branch=master)](https://coveralls.io/r/XD-embedded/xd-tool?branch=master)
 
 ## License
 
