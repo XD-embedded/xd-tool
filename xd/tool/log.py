@@ -25,24 +25,15 @@ class ConsoleFormatter(logging.Formatter):
         logging.Formatter.__init__(self)
         return
 
-    def format(self, record):
-        """Format the specified record as text."""
-        record.message = record.getMessage()
+    def formatMessage(self, record):
+        """Format the specified record message as text."""
         fmt = ""
         if record.levelno > logging.INFO:
             fmt += "%(levelname)s: "
         if record.levelno == logging.DEBUG:
             fmt += "%(name)s: "
         fmt += "%(message)s"
-        s = fmt % record.__dict__
-        if record.exc_info:
-            if not record.exc_text:
-                record.exc_text = self.formatException(record.exc_info)
-        if record.exc_text:
-            if s[-1:] != "\n":
-                s += "\n\n"
-            s = s + record.exc_text + "\n"
-        return s
+        return fmt % record.__dict__
 
 
 def init():
