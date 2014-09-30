@@ -36,7 +36,7 @@ class ConsoleFormatter(logging.Formatter):
         return fmt % record.__dict__
 
 
-def init(stream=None, level=logging.INFO):
+def init(stream=None):
     """Initialize logging module for logging to console.
 
     The root_logger will be setup and initialized to output print out
@@ -56,7 +56,6 @@ def init(stream=None, level=logging.INFO):
     console_formatter = ConsoleFormatter()
     console_logger = logging.StreamHandler(stream=stream)
     console_logger.setFormatter(console_formatter)
-    console_logger.setLevel(level)
     root_logger.addHandler(console_logger)
 
 

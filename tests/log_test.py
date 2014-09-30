@@ -22,12 +22,14 @@ class tests(unittest.case.TestCase):
         xd.tool.log.deinit()
 
     def test_log_debug_on(self):
-        xd.tool.log.init(self.stream, logging.DEBUG)
+        xd.tool.log.init(self.stream)
+        self.logger.setLevel(logging.DEBUG)
         self.logger.debug('test debug')
         self.assertEqual(self.stream.getvalue(), 'foo: test debug\n')
 
     def test_log_debug_off(self):
-        xd.tool.log.init(self.stream, logging.INFO)
+        xd.tool.log.init(self.stream)
+        self.logger.setLevel(logging.INFO)
         self.logger.debug('test debug')
         self.assertEqual(self.stream.getvalue(), '')
 

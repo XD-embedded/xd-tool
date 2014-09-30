@@ -4,6 +4,7 @@ import subprocess
 
 import logging
 log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
 
 
 def chdir(path, quiet=False):

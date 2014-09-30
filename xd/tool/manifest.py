@@ -7,6 +7,7 @@ from xd.tool.shell import call
 
 import logging
 log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
 
 
 __all__ = [ 'Manifest', 'NotInManifest', 'InvalidManifest' ]

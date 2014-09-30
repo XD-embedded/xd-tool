@@ -2,6 +2,8 @@ import os
 
 import logging
 log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
+
 
 from xd.tool.shell import call
 
