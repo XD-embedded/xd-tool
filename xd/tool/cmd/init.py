@@ -16,8 +16,10 @@ def run(args, manifest, env):
     if not os.path.exists('.xd'):
         with open('.xd', 'w') as f:
             f.write('ABI=0\n')
-        log.info('Wrote .xd file')
-    if call('git rev-parse --git-dir', quiet=True) is None:
+        log.debug('Wrote .xd file')
+    if not os.path.exists('.git'):
         if not call('git init'):
             return 'git init failed'
+    if call('git rev-parse --git-dir', quiet=True) != '.git\n':
+        return 'Invalid manifest git dir'
     return
