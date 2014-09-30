@@ -63,6 +63,8 @@ class Manifest(object):
         self.lib_layers = []
         status = call('git submodule status', path=self.topdir, quiet=True)
         for line in status.rstrip('\n').split('\n'):
+            if not line:
+                continue
             sha1, path, describe = line.split(maxsplit=2)
             # FIXME: add proper layer ordering, controllable via some in-layer
             # priorties or something like that.
