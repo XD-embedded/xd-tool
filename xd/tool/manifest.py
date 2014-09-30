@@ -7,6 +7,7 @@ from xd.tool.shell import call
 
 import logging
 log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
 
 
 __all__ = [ 'Manifest', 'NotInManifest', 'InvalidManifest' ]
@@ -61,7 +62,9 @@ class Manifest(object):
         self.meta_layers = ['.']
         self.lib_layers = []
         status = call('git submodule status', path=self.topdir, quiet=True)
-        for line in status.decode('utf-8').rstrip('\n').split('\n'):
+        for line in status.rstrip('\n').split('\n'):
+            if not line:
+                continue
             sha1, path, describe = line.split(maxsplit=2)
             # FIXME: add proper layer ordering, controllable via some in-layer
             # priorties or something like that.
@@ -92,7 +95,7 @@ class Manifest(object):
             return cls.locate_topdir(os.path.dirname(dir))
         dir = call('git rev-parse --show-toplevel',
                    path=dir, quiet=True)
-        dir = dir.rstrip().decode('utf-8')
+        dir = dir.rstrip()
         if not os.path.exists(os.path.join(dir, '.xd')):
             return cls.locate_topdir(os.path.dirname(dir))
         return os.path.realpath(dir)

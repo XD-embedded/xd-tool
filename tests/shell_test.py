@@ -108,12 +108,12 @@ def test_call_false():
 @with_setup(setup_call, teardown_call)
 def test_call_quiet_output():
     output = xd.tool.shell.call("echo foobar", quiet=True)
-    assert output.decode('utf-8') == 'foobar\n'
+    assert output == 'foobar\n'
 
 @with_setup(setup_call, teardown_call)
 def test_call_quiet_output_true():
     output = xd.tool.shell.call("true", quiet=True)
-    assert output.decode('utf-8') == ''
+    assert output == ''
 
 @with_setup(setup_call, teardown_call)
 def test_call_quiet_output_false():

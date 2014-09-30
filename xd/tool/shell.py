@@ -4,6 +4,7 @@ import subprocess
 
 import logging
 log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
 
 
 def chdir(path, quiet=False):
@@ -82,7 +83,7 @@ def call(cmd, path=None, quiet=False, success_returncode=0):
                                    stderr=subprocess.STDOUT)
         output = process.communicate()[0]
         if process.returncode == success_returncode:
-            retval = output
+            retval = output.decode('utf-8')
 
     else:
         returncode = subprocess.call(cmd, shell=isinstance(cmd, str),

@@ -31,6 +31,8 @@ def main(argv=sys.argv):
     log = logging.getLogger(__package__)
     if early_args.debug:
         log.setLevel(logging.DEBUG)
+    else:
+        log.setLevel(logging.INFO)
 
     log.debug('XD-tool %s', xd.tool.__version__)
 
