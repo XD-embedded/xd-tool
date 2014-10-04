@@ -9,7 +9,7 @@ import stat
 import tempfile
 import shutil
 import sh
-from redirect import stdchannel_redirected
+from redirect import *
 
 
 class tests(unittest.case.TestCase):
@@ -29,17 +29,17 @@ class tests(unittest.case.TestCase):
         xd.tool.log.deinit()
 
     def test_init(self):
-        with stdchannel_redirected(1):
+        with stdchannels_redirected():
             self.assertEqual(main(['xd', 'init']), None)
         self.assertTrue(os.path.isdir('.git'))
         self.assertTrue(os.path.isfile('.xd'))
 
     def test_init_twice(self):
-        with stdchannel_redirected(1):
+        with stdchannels_redirected():
             self.assertEqual(main(['xd', 'init']), None)
         self.assertTrue(os.path.isdir('.git'))
         self.assertTrue(os.path.isfile('.xd'))
-        with stdchannel_redirected(2):
+        with stdchannels_redirected():
             self.assertEqual(main(['xd', '-d', 'init']), None)
         self.assertTrue(os.path.isdir('.git'))
         self.assertTrue(os.path.isfile('.xd'))
@@ -47,7 +47,7 @@ class tests(unittest.case.TestCase):
     def test_init_fail_1(self):
         with open('.git', 'w') as f:
             f.write('foobar')
-        with stdchannel_redirected(2):
+        with stdchannels_redirected():
             self.assertNotEqual(main(['xd', 'init']), None)
 
     def test_init_fail_2(self):
@@ -59,11 +59,11 @@ class tests(unittest.case.TestCase):
 
     def test_init_fail_3(self):
         os.chmod('.', stat.S_IREAD|stat.S_IEXEC)
-        with stdchannel_redirected(2):
+        with stdchannels_redirected():
             self.assertNotEqual(main(['xd', 'init']), None)
 
     def test_init_fail_4(self):
         sh.git.init()
         os.chmod('.git/refs/heads', stat.S_IREAD)
-        with stdchannel_redirected(2):
+        with stdchannels_redirected():
             self.assertNotEqual(main(['xd', 'init']), None)
