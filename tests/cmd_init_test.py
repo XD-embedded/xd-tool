@@ -8,6 +8,7 @@ import os
 import stat
 import tempfile
 import shutil
+import sh
 from redirect import stdchannel_redirected
 
 
@@ -62,7 +63,7 @@ class tests(unittest.case.TestCase):
             self.assertNotEqual(main(['xd', 'init']), None)
 
     def test_init_fail_4(self):
-        xd.tool.shell.call('git init', quiet=True)
+        sh.git.init()
         os.chmod('.git/refs/heads', stat.S_IREAD)
         with stdchannel_redirected(2):
             self.assertNotEqual(main(['xd', 'init']), None)
