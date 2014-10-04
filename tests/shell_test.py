@@ -15,12 +15,6 @@ def teardown():
     os.chdir(testcwd)
     os.rmdir(testdir)
 
-def setup_chdir():
-    os.chdir(testcwd)
-
-def teardown_chdir():
-    os.chdir(testcwd)
-
 def setup_call():
     os.chdir(testdir)
 
@@ -28,47 +22,6 @@ def teardown_call():
     os.chdir(testdir)
     for f in glob.glob(os.path.join(testdir, '*')):
         os.unlink(f)
-
-
-@with_setup(setup_chdir, teardown_chdir)
-def test_chdir():
-    assert os.getcwd() != testdir
-    xd.tool.shell.chdir(testdir)
-    assert os.getcwd() == testdir
-
-@with_setup(setup_chdir, teardown_chdir)
-def test_chdir_quiet():
-    assert os.getcwd() != testdir
-    xd.tool.shell.chdir(testdir, quiet=True)
-    assert os.getcwd() == testdir
-
-@with_setup(setup_chdir, teardown_chdir)
-@raises(OSError)
-def test_chdir_nonexistant():
-    assert not os.path.exists('/tmp/THIS_DIRECTORY_SHOULD_NOT_EXIST')
-    xd.tool.shell.chdir('/tmp/THIS_DIRECTORY_SHOULD_NOT_EXIST')
-
-@with_setup(setup_chdir, teardown_chdir)
-def test_chdir_nonexistant_cwd():
-    cwd = tempfile.mkdtemp(prefix='nose-')
-    os.chdir(cwd)
-    os.rmdir(cwd)
-    xd.tool.shell.chdir(testdir)
-    assert os.getcwd() == testdir
-
-@with_setup(setup_chdir, teardown_chdir)
-def test_chdir_same():
-    os.chdir(testdir)
-    xd.tool.shell.chdir(testdir)
-    assert os.getcwd() == testdir
-
-
-@with_setup(setup_chdir, teardown_chdir)
-def test_pushd_popd():
-    xd.tool.shell.pushd(testdir)
-    assert os.getcwd() == testdir
-    xd.tool.shell.popd()
-    assert os.getcwd() == testcwd
 
 
 @with_setup(setup_call, teardown_call)

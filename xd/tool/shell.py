@@ -7,42 +7,6 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 
-def chdir(path, quiet=False):
-    """Change the current working directory to the specified path.
-
-    Arguments:
-    path -- absolute or relative path (relative to current working directory)
-    quiet -- True: be quiet, False: print out notice about new working directory
-    """
-    log.debug("chdir: %s", path)
-    try:
-        cwd = os.getcwd()
-    except OSError as e:
-        cwd = None
-    if (cwd and
-        os.path.realpath(os.path.normpath(path)) == os.path.normpath(cwd)):
-        return
-    if not quiet:
-        print('> cd', path)
-    os.chdir(path)
-    return
-
-
-dirstack = []
-
-def pushd(path, quiet=False):
-    """Save current working directory and change it to the specified path.
-
-    Use popd() function to restore the current working directory again.
-    """
-    dirstack.append(os.getcwd())
-    return chdir(path, quiet)
-
-def popd(quiet=False):
-    """Restore the current working directory."""
-    return chdir(dirstack.pop())
-
-
 def call(cmd, path=None, quiet=False, success_returncode=0):
     """Run shell command.
 
@@ -67,7 +31,7 @@ def call(cmd, path=None, quiet=False, success_returncode=0):
     rpath = os.path.realpath(path)
 
     pwd = os.getcwd()
-    chdir(rpath, quiet=True)
+    os.chdir(rpath)
 
     if not quiet:
         if path:
@@ -91,6 +55,6 @@ def call(cmd, path=None, quiet=False, success_returncode=0):
         if returncode == success_returncode:
             retval = True
 
-    chdir(pwd, quiet=True)
+    os.chdir(pwd)
 
     return retval

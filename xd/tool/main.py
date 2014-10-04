@@ -40,7 +40,7 @@ def main(argv=sys.argv):
     try:
         manifest = Manifest()
         log.debug('manifest=%s', manifest.topdir)
-        xd.tool.shell.chdir(manifest.topdir, quiet=True)
+        os.chdir(manifest.topdir)
     except NotInManifest:
         manifest = None
         log.debug('no manifest')
