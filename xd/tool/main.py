@@ -1,4 +1,5 @@
 import logging
+import warnings
 import argparse
 import sys
 import os
@@ -40,7 +41,7 @@ def main(argv=sys.argv):
     try:
         manifest = Manifest()
         log.debug('manifest=%s', manifest.topdir)
-        xd.tool.shell.chdir(manifest.topdir, quiet=True)
+        os.chdir(manifest.topdir)
     except NotInManifest:
         manifest = None
         log.debug('no manifest')
@@ -61,7 +62,10 @@ def main(argv=sys.argv):
     commands = {}
     def add_parser(command):
         name = command.__name__.split('.')[-1]
-        parser = subparsers.add_parser(name)
+        parser_help = getattr(command, 'parser_help', None)
+        if parser_help is None:
+            warnings.warn('command %s missing help text'%(command.__name__))
+        parser = subparsers.add_parser(name, help=parser_help)
         command.add_arguments(parser)
         commands[name] = command
     # Add builtin subcommands

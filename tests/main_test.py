@@ -1,14 +1,10 @@
 from xd.tool.main import main
-from nose.tools import raises, with_setup
-import logging
-from redirect import stdchannel_redirected
-
+from redirect import *
 
 def test_main_no_args():
     main(['xd'])
 
-
 def test_main_early_args():
-    with stdchannel_redirected(2):
+    with stdchannels_redirected():
         main(['xd', '-d'])
 

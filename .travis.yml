@@ -6,6 +6,9 @@ before_install:
   - "sudo apt-get install realpath"
 install:
   - "pip install coveralls"
+  - "pip install sh"
+  - "git config --global user.email 'travis@xd-embedded.org'"
+  - "git config --global user.name 'Travis CI'"
 script: "./test.sh"
 after_success:
   - coveralls

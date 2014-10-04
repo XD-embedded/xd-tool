@@ -32,8 +32,9 @@ class ConsoleFormatter(logging.Formatter):
             fmt += "%(levelname)s: "
         if record.levelno == logging.DEBUG:
             fmt += "%(name)s: "
-        fmt += "%(message)s"
-        return fmt % record.__dict__
+        message_lines = record.message.split('\n')
+        line_prefix = fmt % record.__dict__
+        return '\n'.join([line_prefix + m for m in message_lines])
 
 
 def init(stream=None):

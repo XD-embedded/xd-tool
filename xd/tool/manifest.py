@@ -1,9 +1,11 @@
 import sys
 import os
 import re
+import sh
+from sh import git
 
 import xd.tool.imp
-from xd.tool.shell import call
+from xd.tool.os import *
 
 import logging
 log = logging.getLogger(__name__)
@@ -61,7 +63,8 @@ class Manifest(object):
         self.submodules = []
         self.meta_layers = ['.']
         self.lib_layers = []
-        status = call('git submodule status', path=self.topdir, quiet=True)
+        with pushd(self.topdir):
+            status = git.submodule.status()
         for line in status.rstrip('\n').split('\n'):
             if not line:
                 continue
@@ -87,18 +90,19 @@ class Manifest(object):
         sys.meta_path.append(xd.tool.imp.MetaImporter(self))
 
     @classmethod
-    def locate_topdir(cls, dir):
-        if dir == '/':
+    def locate_topdir(cls, path):
+        if path == '/':
             return None
-        if not call('git rev-parse --is-inside-work-tree',
-                    path=dir, quiet=True):
-            return cls.locate_topdir(os.path.dirname(dir))
-        dir = call('git rev-parse --show-toplevel',
-                   path=dir, quiet=True)
-        dir = dir.rstrip()
-        if not os.path.exists(os.path.join(dir, '.xd')):
-            return cls.locate_topdir(os.path.dirname(dir))
-        return os.path.realpath(dir)
+        with pushd(path):
+            try:
+                git('rev-parse', '--is-inside-work-tree')
+            except sh.ErrorReturnCode:
+                return cls.locate_topdir(os.path.dirname(path))
+            path = git('rev-parse', '--show-toplevel')
+            path = path.rstrip()
+            if not os.path.exists(os.path.join(path, '.xd')):
+                return cls.locate_topdir(os.path.dirname(path))
+        return os.path.realpath(path)
 
     def load_config(self):
         filename = os.path.join(self.topdir, '.xd')
