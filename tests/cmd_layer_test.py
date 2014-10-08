@@ -46,7 +46,7 @@ class tests(unittest.case.TestCase):
     def test_layer_add(self):
         with stdchannels_redirected():
             self.assertEqual(main(['xd', 'init']), None)
-            self.assertEqual(main(['xd', 'layer', 'add', 'meta/core']), None)
+            self.assertEqual(main(['xd', 'layer', 'add', 'build/core']), None)
 
     def test_layer_add_none(self):
         with stdchannels_redirected():
@@ -64,14 +64,14 @@ class tests(unittest.case.TestCase):
             self.assertEqual(main(['xd', 'init']), None)
         os.chmod('.', stat.S_IREAD|stat.S_IEXEC)
         with stdchannels_redirected():
-            self.assertNotEqual(main(['xd', 'layer', 'add', 'meta/core']), None)
+            self.assertNotEqual(main(['xd', 'layer', 'add', 'build/core']), None)
 
     def test_layer_add_fail_2(self):
         with stdchannels_redirected():
             self.assertEqual(main(['xd', 'init']), None)
         os.chmod('.git/refs/heads', stat.S_IREAD)
         with stdchannels_redirected():
-            self.assertNotEqual(main(['xd', 'layer', 'add', 'meta/core']), None)
+            self.assertNotEqual(main(['xd', 'layer', 'add', 'build/core']), None)
 
     def test_layer_status_empty(self):
         with stdchannels_redirected():
@@ -81,7 +81,7 @@ class tests(unittest.case.TestCase):
     def test_layer_status_nonempty(self):
         with stdchannels_redirected():
             self.assertEqual(main(['xd', 'init']), None)
-            self.assertEqual(main(['xd', 'layer', 'add', 'meta/core']), None)
+            self.assertEqual(main(['xd', 'layer', 'add', 'build/core']), None)
             self.assertEqual(main(['xd', 'layer', 'status']), None)
         stdout_lines = sys.stdout.getvalue().splitlines()
-        self.assertRegex(stdout_lines[-1], 'meta/core .*')
+        self.assertRegex(stdout_lines[-1], 'build/core .*')

@@ -10,9 +10,9 @@ log = logging.getLogger(__name__)
 
 
 def run_status(args, manifest, env, subparser):
-    layers = manifest.meta_layers + manifest.lib_layers
+    layers = manifest.xd_layers + manifest.lib_layers
     layer_name_max_length = max(map(len, layers))
-    for layer in manifest.meta_layers:
+    for layer in manifest.xd_layers:
         if layer == '.':
             continue
         with pushd(layer):
@@ -22,7 +22,7 @@ def run_status(args, manifest, env, subparser):
 
 
 layers = {
-    'meta/core' : 'https://github.com/XD-embedded/xd-meta-core.git',
+    'build/core' : 'https://github.com/XD-embedded/xd-build-core.git',
 }
 
 

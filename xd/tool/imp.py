@@ -8,11 +8,11 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 
-class MetaImporter(object):
-    """A meta path finder for XD-embedded metadata library packages.
+class LayerImporter(object):
+    """A meta path finder for XD-embedded layer packages.
 
-    Instances of this class can be used to load XD-embedded metadata library
-    packages into the xd.meta namespace.
+    Instances of this class can be used to load XD-embedded layer packages
+    into the xd namespace.
 
     To use it, add an instance of it to sys.meta_path.
     """
@@ -21,7 +21,7 @@ class MetaImporter(object):
         """Constructor.
 
         Arguments:
-        manifest -- XD-embedded manifest containing the metadata layers to use
+        manifest -- XD-embedded manifest containing the layers to use
         """
         self.manifest = manifest
 
@@ -32,17 +32,19 @@ class MetaImporter(object):
         sys.modules, Python will call this method on objects in sys.meta_path.
 
         Arguments:
-        fullname -- the Python module name, fx. "xd.meta.core"
+        fullname -- the Python module name, fx. "xd.build.core"
         path -- import path (ignored)
         target -- target module (ignored)
         """
         log.debug('find_spec(%s, %s, %s)', fullname, path, target)
         if fullname.startswith('.'):
             return None
-        meta_name = self.manifest.meta_pkg_layer(fullname)
-        if meta_name:
-            log.debug('looking for layer %s', meta_name)
-            libdir = self.manifest.get_meta_libdir(meta_name)
+        layer_dir = self.manifest.layer_package_to_dir(fullname)
+        if layer_dir:
+            log.debug('looking for layer %s', layer_dir)
+            libdir = self.manifest.get_layer_libdir(layer_dir)
+            if not libdir:
+                return None
             spec = importlib.util.spec_from_file_location(
                 fullname, os.path.join(libdir, '__init__.py'))
             return spec
@@ -61,8 +63,9 @@ def import_commands(layer=None):
     if layer is None:
         package = 'xd.tool.cmd'
     else:
-        package = 'xd.meta.%s.cmd'%(layer)
+        package = 'xd.%s.cmd'%(layer.replace(os.sep, '.'))
     try:
+        log.debug('importing %s', package)
         commands = importlib.import_module(package)
     except ImportError:
         return
