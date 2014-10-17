@@ -37,17 +37,18 @@ def add_commands(subparsers, path):
         try:
             command = importlib.import_module('.' + name, path)
         except Exception as e:
-            log.warning('failed to import %s command: %s.%s',
+            log.warning('failed to import %s command: %s',
                         path, name, exc_info=True)
             continue
-        if not getattr(command, 'run'):
-            log.debug('skipping command module without run function: %s', name)
+        if not getattr(command, 'run', None):
+            log.warning('skipping command module without run function: %s',
+                        name)
             continue
         log.debug('command: %s'%(name))
         name = command.__name__.split('.')[-1]
         parser_help = getattr(command, 'parser_help', None)
         if parser_help is None:
-            warnings.warn('command %s missing help text'%(command.__name__))
+            log.warning('command %s missing help text'%(command.__name__))
         parser = subparsers.add_parser(name, help=parser_help)
         command.add_arguments(parser)
         parser.set_defaults(run=command.run)
