@@ -1,16 +1,9 @@
 import xd.tool.log
 
 import unittest
-from nose.tools import raises, with_setup
-
 import logging
 import io
 
-
-def test_double_deinit():
-    xd.tool.log.init()
-    xd.tool.log.deinit()
-    xd.tool.log.deinit()
 
 class tests(unittest.case.TestCase):
 

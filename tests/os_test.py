@@ -1,20 +1,17 @@
 from xd.tool.os import *
-import unittest
-from nose.tools import raises, with_setup
 
+from case import *
+import unittest
 import os
 import tempfile
-import glob
 
-class tests(unittest.case.TestCase):
+
+class tests(TestCase):
 
     def setUp(self):
-        self.cwd = os.getcwd()
-        self.testdir = tempfile.mkdtemp(prefix='unittest-')
-
-    def tearDown(self):
+        super(tests, self).setUp()
+        self.cwd = self.restore['cwd']
         os.chdir(self.cwd)
-        os.rmdir(self.testdir)
 
     def test_pushd(self):
         self.assertEqual(os.getcwd(), self.cwd)
@@ -39,21 +36,23 @@ class tests(unittest.case.TestCase):
         self.assertEqual(os.getcwd(), self.cwd)
 
     def test_pushd_cwd_nonexistant(self):
-        cwd = tempfile.mkdtemp(prefix='unittest-')
-        os.chdir(cwd)
-        os.rmdir(cwd)
-        with self.assertRaises(OSError):
-            os.getcwd()
-        with self.assertRaises(OSError):
-            with pushd(self.testdir):
-                self.fail('this should not be reached')
-        with self.assertRaises(OSError):
-            os.getcwd()
+        with tempfile.TemporaryDirectory(prefix='unittest-') as cwd:
+            os.chdir(cwd)
+            os.rmdir(cwd)
+            with self.assertRaises(OSError):
+                os.getcwd()
+            with self.assertRaises(OSError):
+                with pushd(self.testdir):
+                    self.fail('this should not be reached')
+            with self.assertRaises(OSError):
+                os.getcwd()
+            os.mkdir(cwd)
 
     def test_pushd_cwd_removed(self):
-        cwd = tempfile.mkdtemp(prefix='unittest-')
-        os.chdir(cwd)
-        with self.assertRaises(OSError):
-            with pushd(self.testdir):
-                os.rmdir(cwd)
-        self.assertEqual(os.getcwd(), self.testdir)
+        with tempfile.TemporaryDirectory(prefix='unittest-') as cwd:
+            os.chdir(cwd)
+            with self.assertRaises(OSError):
+                with pushd(self.testdir):
+                    os.rmdir(cwd)
+            self.assertEqual(os.getcwd(), self.testdir)
+            os.mkdir(cwd)
