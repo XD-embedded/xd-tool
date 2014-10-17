@@ -6,8 +6,6 @@ import os
 
 import xd.tool
 import xd.tool.log
-import xd.tool.cmd
-from xd.tool.manifest import *
 
 
 def main(argv=sys.argv):
@@ -38,10 +36,12 @@ def main(argv=sys.argv):
     log.debug('XD-tool %s', xd.tool.__version__)
 
     # Establish the manifest stack order
+    from xd.tool.manifest import Manifest, NotInManifest
     try:
         manifest = Manifest()
-        log.debug('manifest=%s', manifest.topdir)
+        log.debug('manifest %s', manifest.topdir)
         os.chdir(manifest.topdir)
+        manifest.extend_path(sys.path)
     except NotInManifest:
         manifest = None
         log.debug('no manifest')
@@ -59,23 +59,12 @@ def main(argv=sys.argv):
         help='Debug the XD-tool')
     subparsers = parser.add_subparsers(title='XD commands', dest='command')
 
-    commands = {}
-    def add_parser(command):
-        name = command.__name__.split('.')[-1]
-        parser_help = getattr(command, 'parser_help', None)
-        if parser_help is None:
-            warnings.warn('command %s missing help text'%(command.__name__))
-        parser = subparsers.add_parser(name, help=parser_help)
-        command.add_arguments(parser)
-        commands[name] = command
     # Add builtin subcommands
-    for command in xd.tool.imp.import_commands():
-        add_parser(command)
+    from xd.tool.commands import add_commands
+    add_commands(subparsers, 'xd.tool.cmd')
     # Add manifest subcommands
     if manifest:
-        #manifest.add_commands(subparsers)
-        for command in manifest.import_commands():
-            add_parser(command)
+        manifest.add_commands(subparsers)
 
     args = parser.parse_args(remaining_args)
     log.debug('args: %r', args)
@@ -84,5 +73,4 @@ def main(argv=sys.argv):
         parser.print_usage()
         return
 
-    command = commands[args.command]
-    return command.run(args, manifest, os.environ)
+    return args.run(args, manifest, os.environ)

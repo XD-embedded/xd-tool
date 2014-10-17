@@ -1,23 +1,9 @@
 import xd.tool.shell
 
-import unittest
-from nose.tools import raises, with_setup
-
+from case import *
 import os
-import tempfile
-import glob
-import shutil
 
-class tests(unittest.case.TestCase):
-
-    def setUp(self):
-        self.cwd = os.getcwd()
-        self.testdir = tempfile.mkdtemp(prefix='unittest-')
-        os.chdir(self.testdir)
-
-    def teardown(self):
-        os.chdir(self.cwd)
-        shuil.rmtree(self.testdir, ignore_errors=True)
+class tests(TestCase):
 
     def test_call(self):
         self.assertFalse(os.path.exists("FOOBAR"))

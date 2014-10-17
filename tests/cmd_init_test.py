@@ -1,46 +1,27 @@
 from xd.tool.main import main
-import xd.tool.log
 
-from nose.tools import raises, with_setup
-import unittest
-import sys
+from case import *
+from redirect import *
 import os
 import stat
-import tempfile
-import shutil
 import sh
-from redirect import *
 
 
-class tests(unittest.case.TestCase):
-
-    def setUp(self):
-        self.oldcwd = os.getcwd()
-        self.oldpwd = os.environ['PWD'] or None
-        self.testdir = tempfile.mkdtemp(prefix='nose-')
-        os.chdir(self.testdir)
-        os.environ['PWD']=self.testdir
-
-    def tearDown(self):
-        os.chdir(self.oldcwd)
-        if self.oldpwd:
-            os.environ['PWD'] = self.oldpwd
-        shutil.rmtree(self.testdir, ignore_errors=True)
-        xd.tool.log.deinit()
+class tests(TestCase):
 
     def test_init(self):
         with stdchannels_redirected():
-            self.assertEqual(main(['xd', 'init']), None)
+            self.assertIsNone(main(['xd', 'init']))
         self.assertTrue(os.path.isdir('.git'))
         self.assertTrue(os.path.isfile('.xd'))
 
     def test_init_twice(self):
         with stdchannels_redirected():
-            self.assertEqual(main(['xd', 'init']), None)
+            self.assertIsNone(main(['xd', 'init']))
         self.assertTrue(os.path.isdir('.git'))
         self.assertTrue(os.path.isfile('.xd'))
         with stdchannels_redirected():
-            self.assertEqual(main(['xd', '-d', 'init']), None)
+            self.assertIsNone(main(['xd', '-d', 'init']))
         self.assertTrue(os.path.isdir('.git'))
         self.assertTrue(os.path.isfile('.xd'))
 

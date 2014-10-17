@@ -10,21 +10,24 @@ log = logging.getLogger(__name__)
 
 
 def run_status(args, manifest, env, subparser):
-    layers = manifest.meta_layers + manifest.lib_layers
-    layer_name_max_length = max(map(len, layers))
-    for layer in manifest.meta_layers:
-        if layer == '.':
-            continue
-        with pushd(layer):
+    if not manifest.layers:
+        return
+    layer_name_max_length = max(map(lambda l: len(l.submodule),
+                                    manifest.layers))
+    for layer in manifest.layers:
+        if layer.submodule == '.':
             url = git.config('remote.origin.url')
-        print("%%-%ds  %%s"%(layer_name_max_length)%(layer, url.strip()))
+        else:
+            with pushd(layer.path):
+                url = git.config('remote.origin.url')
+        print("%%-%ds  %%s"%(layer_name_max_length)%(
+            layer.submodule, url.strip()))
     return
 
 
 layers = {
-    'meta/core' : 'https://github.com/XD-embedded/xd-meta-core.git',
+    'build/core' : 'https://github.com/XD-embedded/xd-build-core.git',
 }
-
 
 def run_list(args, manifest, env, subparser):
     layer_name_max_length = max(map(len, layers.keys()))
