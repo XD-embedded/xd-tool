@@ -6,7 +6,7 @@ import logging
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
-def call(cmd, ok_code=[0]):
+def call(cmd, ok_code=None):
     """Run shell command.
 
     Run the given shell command, echoing command line to stdout, and
@@ -16,6 +16,8 @@ def call(cmd, ok_code=[0]):
     cmd -- the command (with arguments), string or list
     ok_code -- command exit codes to consider as success
     """
+    if ok_code is None:
+        ok_code = [0]
     log.debug("call: %s", cmd)
     print('> %s'%(cmd))
     retval = None

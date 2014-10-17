@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 
-__all__ = [ 'add_commands' ]
+__all__ = ['add_commands']
 
 
 def add_commands(subparsers, path):

@@ -7,9 +7,12 @@ import configparser
 
 class ManifestStub(object):
 
-    def __init__(self, topdir, priority={}):
+    def __init__(self, topdir, priority=None):
         self.topdir = topdir
-        self.priority = priority
+        if priority is None:
+            self.priority = {}
+        else:
+            self.priority = priority
 
     def get_priority(self, layer):
         return self.priority.get(layer)

@@ -49,7 +49,9 @@ class TestCase(unittest.case.TestCase):
 
     def setup_manifest(self,
                        manifest_layer=False, manifest_priority=1000,
-                       layers={}):
+                       layers=None):
+        if layers is None:
+            layers = {}
         os.mkdir(os.path.join(self.testdir, 'manifest'))
         os.chdir(os.path.join(self.testdir, 'manifest'))
         config = configparser.ConfigParser()

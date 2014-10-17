@@ -6,7 +6,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 
-__all__ = [ 'Layer', 'NotALayer' ]
+__all__ = ['Layer', 'NotALayer']
 
 
 class NotALayer(Exception):

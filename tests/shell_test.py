@@ -15,3 +15,6 @@ class tests(TestCase):
 
     def test_call_false(self):
         self.assertFalse(xd.tool.shell.call("false"))
+
+    def test_call_ok_code(self):
+        self.assertTrue(xd.tool.shell.call("false", ok_code=[1]))

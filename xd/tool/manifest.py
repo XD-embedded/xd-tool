@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 
-__all__ = [ 'Manifest', 'NotInManifest', 'InvalidManifest' ]
+__all__ = ['Manifest', 'NotInManifest', 'InvalidManifest']
 
 
 class NotInManifest(Exception):
@@ -30,9 +30,9 @@ class InvalidManifest(Exception):
 class Manifest(object):
     """A Manifest represents an XD-embedded manifest."""
 
-    def __init__(self, dir_=None, env=os.environ):
-        if not dir_:
-            dir_ = env.get('PWD') or os.getcwd()
+    def __init__(self, dir_=None, env=None):
+        if dir_ is None:
+            dir_ = (env or os.environ).get('PWD') or os.getcwd()
         self.topdir = self.locate_topdir(dir_)
         if not self.topdir:
             raise NotInManifest()
