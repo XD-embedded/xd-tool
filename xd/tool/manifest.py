@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 
-__all__ = [ 'Manifest', 'NotInManifest', 'InvalidManifest' ]
+__all__ = ['Manifest', 'NotInManifest', 'InvalidManifest']
 
 
 class NotInManifest(Exception):

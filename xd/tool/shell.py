@@ -17,7 +17,7 @@ def call(cmd, ok_code=None):
     ok_code -- command exit codes to consider as success
     """
     if ok_code is None:
-        ok_code = [ 0 ]
+        ok_code = [0]
     log.debug("call: %s", cmd)
     print('> %s'%(cmd))
     retval = None

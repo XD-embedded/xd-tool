@@ -12,25 +12,25 @@ except ImportError:
 from xd.tool import __version__
 
 setup(
-    name = "XD-tool",
-    version = __version__,
+    name="XD-tool",
+    version=__version__,
 
-    packages = find_packages(exclude=['_test']),
-    py_modules = ['ez_setup'],
-    entry_points = { 'console_scripts': [ 'xd = xd.tool.main:main' ] },
+    packages=find_packages(exclude=['_test']),
+    py_modules=['ez_setup'],
+    entry_points={'console_scripts': ['xd = xd.tool.main:main']},
 
     # metadata for upload to PyPI
-    author = "Esben Haabendal",
-    author_email = "esben@haabendal.dk",
-    description = "XD-tool - command line tool for XD-embedded",
-    license = "MIT",
-    url = "http://www.xd-embedded.org/xd-tool",
-    keywords = ['build', 'embedded', 'linux'],
+    author="Esben Haabendal",
+    author_email="esben@haabendal.dk",
+    description="XD-tool - command line tool for XD-embedded",
+    license="MIT",
+    url="http://www.xd-embedded.org/xd-tool",
+    keywords=['build', 'embedded', 'linux'],
 
     # nose integration
-    setup_requires = ['nose>=1.0'],
-    tests_require = ['coverage'],
-    classifiers = [
+    setup_requires=['nose>=1.0'],
+    tests_require=['coverage'],
+    classifiers=[
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.4',
         'License :: OSI Approved :: MIT License',
