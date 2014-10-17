@@ -3,6 +3,7 @@ import sh
 sh.Command._call_args['err_to_out'] = True
 from sh import git
 from xd.tool.shell import call
+import configparser
 
 import logging
 log = logging.getLogger(__name__)
@@ -18,8 +19,10 @@ def run(args, manifest, env):
         if not call('git init'):
             return 'git init failed'
     if not os.path.exists('.xd'):
+        config = configparser.ConfigParser()
+        config['manifest'] = {'abi': '0'}
         with open('.xd', 'w') as f:
-            f.write('ABI=0\n')
+            config.write(f)
         if not call('git add .xd'):
             return 'git add failed'
         if not call('git commit -m "Initial commit" -- .xd'):

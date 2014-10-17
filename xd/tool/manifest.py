@@ -3,9 +3,14 @@ import os
 import re
 import sh
 from sh import git
+import configparser
+import importlib
+import pkgutil
 
-import xd.tool.imp
+import xd
+from xd.tool.commands import *
 from xd.tool.os import *
+from xd.tool.layer import *
 
 import logging
 log = logging.getLogger(__name__)
@@ -25,63 +30,51 @@ class InvalidManifest(Exception):
 class Manifest(object):
     """A Manifest represents an XD-embedded manifest."""
 
-    LIB_DIR_PATTERN = re.compile('^lib/(\w+)$')
-    LAYER_PKG_PATTERN = re.compile('^xd\.(\w+(\.\w+)*)')
-
-    @classmethod
-    def lib_dir_layer(cls, dir_path):
-        match = cls.LIB_DIR_PATTERN.match(dir_path)
-        if match:
-            return match.group(1)
-        else:
-            return None
-
-    @classmethod
-    def layer_package_to_dir(cls, pkg_path):
-        match = cls.LAYER_PKG_PATTERN.match(pkg_path)
-        if match:
-            return match.group(1)
-        else:
-            return None
-
-    @classmethod
-    def layer_dir_to_package(cls, dir_path):
-        return 'xd.%s'%(dir_path.replace(os.sep, '.'))
-
-    def __init__(self, dir=None, env=os.environ, init=False):
-        if not dir:
-            dir = env.get('PWD') or os.getcwd()
-        self.topdir = self.locate_topdir(dir)
+    def __init__(self, dir_=None, env=os.environ):
+        if not dir_:
+            dir_ = env.get('PWD') or os.getcwd()
+        self.topdir = self.locate_topdir(dir_)
         if not self.topdir:
             raise NotInManifest()
-        self.load_config()
-        self.submodules = []
-        self.xd_layers = ['.']
-        self.lib_layers = []
+        self.layers = []
+        self.configfile = os.path.join(self.topdir, '.xd')
+        self.config = configparser.ConfigParser()
+        self.config.read(self.configfile)
         with pushd(self.topdir):
             status = git.submodule.status()
         for line in status.rstrip('\n').split('\n'):
             if not line:
                 continue
             sha1, path, describe = line.split(maxsplit=2)
-            # FIXME: add proper layer ordering, controllable via some in-layer
-            # priorties or something like that.
-            self.submodules.append(path)
-            if self.lib_dir_layer(path):
-                self.lib_layers.append(path)
-            else:
-                self.xd_layers.append(path)
-        if 'XD_LAYER_PATH' in env:
-            self.xd_layers = env['XD_LAYER_PATH'].split(':')
-        elif 'LAYER_PATH' in self.config:
-            self.xd_layers = self.config['LAYER_PATH'].split(':')
-        if 'XD_LIB_PATH' in env:
-            self.lib_layers = env['XD_LIB_PATH'].split(':')
-        elif 'LIB_PATH' in env:
-            self.lib_layers = self.config['LIB_PATH'].split(':')
-        log.debug('xd_layers %s', self.xd_layers)
-        log.debug('lib_layers %s', self.lib_layers)
-        sys.meta_path.append(xd.tool.imp.LayerImporter(self))
+            try:
+                layer = Layer(self, path, commit=sha1)
+            except NotALayer:
+                log.debug('Ignoring non-layer submodule %s', path)
+                continue
+            self.layers.append(layer)
+        with pushd(self.topdir):
+            try:
+                sha1 = git('rev-parse', 'HEAD', '--')
+            except sh.ErrorReturnCode as e:
+                log.debug('git rev-parse HEAD on manifest failed\n%s', e)
+                sha1 = None
+        try:
+            layer = Layer(self, '.', commit=sha1)
+            self.layers.append(layer)
+        except NotALayer:
+            log.debug('Manifest is not a layer')
+        self.layers.sort(key=lambda l: l.priority())
+
+    def extend_path(self, path):
+        for layer in self.layers:
+            path.insert(0, layer.path)
+        xd.__path__ = pkgutil.extend_path(xd.__path__, xd.__name__)
+
+    def get_priority(self, layer_name):
+        try:
+            return self.config['priority'].getint(layer_name)
+        except KeyError:
+            return None
 
     @classmethod
     def locate_topdir(cls, path):
@@ -94,32 +87,19 @@ class Manifest(object):
                 return cls.locate_topdir(os.path.dirname(path))
             path = git('rev-parse', '--show-toplevel')
             path = path.rstrip()
-            if not os.path.exists(os.path.join(path, '.xd')):
+            configfile = os.path.join(path, '.xd')
+            if not os.path.exists(configfile):
+                return cls.locate_topdir(os.path.dirname(path))
+            config = configparser.ConfigParser()
+            config.read(configfile)
+            if not config.has_section('manifest'):
                 return cls.locate_topdir(os.path.dirname(path))
         return os.path.realpath(path)
 
-    def load_config(self):
-        filename = os.path.join(self.topdir, '.xd')
-        source = open(filename).read()
-        code = compile(source, filename, 'exec', dont_inherit=True)
-        variables = {}
-        exec(code, variables)
-        self.config = {k: v for k, v in variables.items()
-                       if not k.startswith('_') and
-                       type(v) in (str, list, dict, bool) }
-
-    def get_layer_libdir(self, package):
-        libdir = os.path.join(self.topdir, package.replace('.', os.sep), 'lib')
-        if not os.path.isdir(libdir):
-            log.debug('layer libdir not found: %s'%(libdir))
-            return None
-        return libdir
-
-    def import_commands(self):
-        for path in self.xd_layers:
-            if not os.path.isdir(os.path.join(path, 'lib', 'cmd')):
-                log.debug('no commands in %s layer', path)
+    def add_commands(self, subparsers):
+        for layer in self.layers:
+            commands_package = layer.config.get('commands')
+            if not commands_package:
                 continue
-            log.debug('maybe commands in %s layer', path)
-            for command in xd.tool.imp.import_commands(path):
-                yield command
+            log.debug('commands in %s layer', layer.submodule)
+            add_commands(subparsers, commands_package)
