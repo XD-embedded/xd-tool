@@ -30,10 +30,10 @@ class InvalidManifest(Exception):
 class Manifest(object):
     """A Manifest represents an XD-embedded manifest."""
 
-    def __init__(self, dir_=None, env=None):
-        if dir_ is None:
-            dir_ = (env or os.environ).get('PWD') or os.getcwd()
-        self.topdir = self.locate_topdir(dir_)
+    def __init__(self, cwd=None, env=None):
+        if cwd is None:
+            cwd = (env or os.environ).get('PWD') or os.getcwd()
+        self.topdir = self.locate_topdir(cwd)
         if not self.topdir:
             raise NotInManifest()
         self.layers = []
