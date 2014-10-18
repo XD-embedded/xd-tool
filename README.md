@@ -14,7 +14,7 @@ additional commands by the manifest layers.
 - [![Coverage Status](https://coveralls.io/repos/XD-embedded/xd-tool/badge.png?branch=master)](https://coveralls.io/r/XD-embedded/xd-tool?branch=master) - Code coverage analysis is provided by [Coveralls](https://coveralls.io)
 - [![Codacy Badge](https://www.codacy.com/project/badge/8ec89efe264548c4a441b67053d51ab7)](https://www.codacy.com/public/XD-embedded/xdtool) - Static analysis is provided by [Codacy](https://www.codacy.com)
 - [![Issue Stats](http://issuestats.com/github/XD-embedded/xd-tool/badge/pr)](http://issuestats.com/github/XD-embedded/xd-tool) [![Issue Stats](http://issuestats.com/github/XD-embedded/xd-tool/badge/issue)](http://issuestats.com/github/XD-embedded/xd-tool) - Issue and Pull Request statistics provided by [Issue Stats](http://issuestats.com/)
-
+- [XD-tool package](https://pypi.python.org/pypi/XD-tool) in Python Package Index
 
 ## License
 
