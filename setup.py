@@ -1,6 +1,6 @@
 try:
     import ez_setup
-    ez_setup.use_setuptools()
+    ez_setup.use_setuptools(version="5.5.1")
 except ImportError:
     pass
 
@@ -19,17 +19,20 @@ setup(
     py_modules=['ez_setup'],
     entry_points={'console_scripts': ['xd = xd.tool.main:main']},
 
+    install_requires=['sh'],
+    setup_requires=[],
+    tests_require=['nose>=1.0', 'coverage'],
+
     # metadata for upload to PyPI
     author="Esben Haabendal",
     author_email="esben@haabendal.dk",
-    description="XD-tool - command line tool for XD-embedded",
+    description="""Command line tool for XD-embedded.
+XD-tool provides a shell CLI command used to interact with XD-embedded
+manifest.  It supports basic manifest management, and a command plugin
+framework, so that manifest layers can provide commands.""",
     license="MIT",
     url="http://www.xd-embedded.org/xd-tool",
     keywords=['build', 'embedded', 'linux'],
-
-    # nose integration
-    setup_requires=['nose>=1.0'],
-    tests_require=['coverage'],
     classifiers=[
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.4',
