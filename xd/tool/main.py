@@ -40,7 +40,6 @@ def main(argv=sys.argv):
     try:
         manifest = Manifest()
         log.debug('manifest %s', manifest.topdir)
-        os.chdir(manifest.topdir)
         manifest.extend_path(sys.path)
     except NotInManifest:
         manifest = None
