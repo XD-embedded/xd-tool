@@ -43,4 +43,6 @@ framework, so that manifest layers can provide commands.""",
         'Topic :: Software Development :: Embedded Systems',
         'Topic :: Software Development :: Build Tools',
         ],
+
+    test_suite='nose.collector',
 )
