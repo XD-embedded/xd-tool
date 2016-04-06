@@ -2,16 +2,42 @@ language: python
 python:
   - 3.4
   - 3.5
-before_install:
-  - "sudo apt-get update"
-  - "sudo apt-get install realpath"
+cache: pip
+
 install:
-  - "pip install coveralls"
-  - "pip install sh"
-  - "git config --global user.email 'travis@xd-embedded.org'"
-  - "git config --global user.name 'Travis CI'"
-script: "./test.sh"
+  - sudo apt-get update && sudo apt-get install realpath
+  - pip install -r requirements.txt
+
+script:
+  - git config --global user.email 'travis@xd-embedded.org'
+  - git config --global user.name 'Travis CI'
+  - ./test.sh
+
 after_success:
   - coveralls
-notifications:
-  irc: "chat.freenode.net#xd-embedded"
+
+before_deploy:
+  - git fetch --unshallow || true
+
+deploy:
+
+  - provider: pypi
+    distributions: sdist bdist_wheel
+    server: https://testpypi.python.org/pypi
+    on:
+      python: 3.5
+      branch: master
+      tags: false
+    user: esbenhaabendal
+    password:
+      secure: ZGEETckxCEJacZvgopzd8vIGRDRlIlHj873QNgy7/cauDO8DWPN22iqNPtFr8JzvXDDFLqdhNb62Ok0541I/bYPnQPdiBXzF0MueFkgaUnquz/PzhIVcMudNdvHu0Ox9x8rVP3u7570FGllZM1jwrZP0Sur77uX34Q7SF56vZ2k=
+
+  - provider: pypi
+    distributions: sdist bdist_wheel
+    on:
+      python: 3.5
+      branch: master
+      tags: true
+    user: esbenhaabendal
+    password:
+      secure: YDAqYchU4YWSp5fspg2o+SPMo9ZZay3x6JV7QpejMddolPw/RikGijfsf6oUk81xIHZmPX4GMP2Frjre9bnO6mHPzbdkx3RSp5/rVJSjPwqUDvHZpqTA1d/f+YzHCBTjuHVfBI7vq0NFH2YPxPS55MA/RdRNmIONJLLDS9yLyg8=
