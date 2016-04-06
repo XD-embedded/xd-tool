@@ -11,9 +11,9 @@ with open('README.rst') as readme_file:
 # down the version generated for non-tagged commits.
 def version_config():
     import os
-    if os.environ.get('TRAVIS_TAG'):
-        return True
     from setuptools_scm.version import postrelease_version
+    if os.environ.get('TRAVIS_TAG'):
+        return {'version_scheme': postrelease_version}
     # Use a version like 1.1.0.54 for commit with distance 54 from v1.1.0 tag
     def version_scheme(version):
         return postrelease_version(version).replace('post', '')
